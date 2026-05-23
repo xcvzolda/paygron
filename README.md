@@ -3,3 +3,6 @@ Paygron is a Payment System that uses WebNFC to use NFC cards as actual payment 
 
 ## Why is Paygron better then GamePay (its forked from it)?
 It is kinda better as the original netlify site was taken down prob by creator and i am planning to matain the repo MORE
+
+# Where can i visit it?
+Its live on: https://paygron.netlify.app/
