@@ -13,4 +13,5 @@ Its live on: https://paygron.netlify.app/
 
 # ALSO
 I have launched the Paygron Community Discord Server. For help using i recommend you go there. Discord anyway is free (ps: You need to verify your email before sending messages due to bots maybe inavding the server)
+
 Want to join? Click on the Join Discord badge a little more up
