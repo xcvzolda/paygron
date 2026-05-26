@@ -30,6 +30,7 @@
           name="to"
           :inputValue="i"
           v-model="to"
+          :disabled="type === 'collect'"
         >
           {{ player.name }}
         </MegaChoice>
@@ -90,9 +91,12 @@ export default {
       const activePlayer = players[this.activePlayerId];
       const type = this.type;
 
-
       if (type === 'pay') {
         amount = -amount;
+      }
+
+      if (type === 'collect') {
+        this.to = '0';
       }
 
       activePlayer.amount += amount;
