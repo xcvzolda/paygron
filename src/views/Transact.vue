@@ -4,9 +4,6 @@
     
     <form class="mt-32 w-9/12" @submit.prevent="transact">
       <div class="flex">
-        <MegaChoice name="type" inputValue="collect" v-model="type" overrideClass="border-green-500 text-green-500">
-          Collect
-        </MegaChoice>
         <MegaChoice name="type" inputValue="pay" v-model="type" overrideClass="border-red-500 text-red-500">
           Pay
         </MegaChoice>
