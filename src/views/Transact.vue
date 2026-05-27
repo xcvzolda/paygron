@@ -1,7 +1,7 @@
 <template>
   <div class="justify-start">
-    <h3 class="text-2xl text-gray-100 text-center font-semibold mt-10">
-      {{ currentPlayer?.name }}
+    <h3 class="text-green-500 font-semibold">
+    {{ formattedAmount }}
     </h3>
 
     <form class="mt-32 w-9/12" @submit.prevent="transact">
@@ -96,6 +96,11 @@ export default {
     opponents() {
       const { [this.activePlayerId]: _, ...rest } = this.players;
       return rest;
+    
+    formattedAmount() {
+      const amount = (this.currentPlayer && this.currentPlayer.amount) || 0;
+      return new Intl.NumberFormat('en-IN').format(amount);
+      }
     },
   },
 
