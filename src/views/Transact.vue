@@ -18,7 +18,6 @@
 
       <div class="text-gray-500">
         <span v-if="type === 'pay'">To</span>
-        <span v-else-if="type === 'collect'">From</span>
       </div>
       <div class="flex">
         <MegaChoice name="to" inputValue="0" v-model="to">
