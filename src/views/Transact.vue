@@ -8,7 +8,9 @@
           Pay
         </MegaChoice>
       </div>
-
+      <h3 class="text-green-500 font-semibold">
+          {{ new Intl.NumberFormat('en-IN').format(player.amount) }}
+        </h3>
       <FormInput class="my-10" v-model="amount" type="number" required>
         Amount
       </FormInput>
@@ -17,9 +19,6 @@
         <span v-if="type === 'pay'">To</span>
       </div>
       <div class="flex">
-        <MegaChoice name="to" inputValue="0" v-model="to">
-          Bank
-        </MegaChoice>
         <MegaChoice
           v-for="(player, i) in opponents"
           :key="i"
