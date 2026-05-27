@@ -17,9 +17,6 @@
         <h2 class="mt-3 font-medium text-2xl">
           {{ player.name }}
         </h2>
-        <h3 class="text-green-500 font-semibold">
-          {{ new Intl.NumberFormat('en-IN').format(player.amount) }}
-        </h3>
       </li>
     </ul>
 
