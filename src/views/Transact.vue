@@ -1,16 +1,25 @@
 <template>
   <div class="justify-start">
-    <h3 class="text-2xl text-gray-100 text-center font-semibold mt-10">{{ players[activePlayerId].name }}</h3>
-    
+    <h3 class="text-2xl text-gray-100 text-center font-semibold mt-10">
+      {{ currentPlayer?.name }}
+    </h3>
+
     <form class="mt-32 w-9/12" @submit.prevent="transact">
       <div class="flex">
-        <MegaChoice name="type" inputValue="pay" v-model="type" overrideClass="border-red-500 text-red-500">
+        <MegaChoice
+          name="type"
+          inputValue="pay"
+          v-model="type"
+          overrideClass="border-red-500 text-red-500"
+        >
           Pay
         </MegaChoice>
       </div>
+
       <h3 class="text-green-500 font-semibold">
-          {{ new Intl.NumberFormat('en-IN').format(player.amount) }}
-        </h3>
+        {{ new Intl.NumberFormat('en-IN').format(currentPlayer?.amount || 0) }}
+      </h3>
+
       <FormInput class="my-10" v-model="amount" type="number" required>
         Amount
       </FormInput>
@@ -18,6 +27,7 @@
       <div class="text-gray-500">
         <span v-if="type === 'pay'">To</span>
       </div>
+
       <div class="flex">
         <MegaChoice
           v-for="(player, i) in opponents"
@@ -37,12 +47,8 @@
         style="bottom: 30px; left: 50%"
         :class="type === 'pay' ? 'bg-red-500' : 'bg-green-500'"
       >
-        <span v-if="type === 'pay'">
-          Pay
-        </span>
-        <span v-if="type === 'collect'">
-          Collect
-        </span>
+        <span v-if="type === 'pay'">Pay</span>
+        <span v-if="type === 'collect'">Collect</span>
       </Button>
     </form>
   </div>
@@ -55,63 +61,86 @@ import Button from '@/components/Button.vue';
 
 export default {
   name: 'Transact',
+
   components: {
     FormInput,
     MegaChoice,
     Button,
   },
+
   data() {
     return {
       type: 'pay',
       to: '0',
       amount: 0,
-    }
+    };
   },
+
   computed: {
     activePlayerId() {
-      return this.$route.params.id;
+      return this.$route.params.id || '0';
     },
+
     players() {
-      return JSON.parse(localStorage.getItem('game'));
+      try {
+        return JSON.parse(localStorage.getItem('game') || '{}');
+      } catch (e) {
+        return {};
+      }
     },
+
+    currentPlayer() {
+      return this.players?.[this.activePlayerId];
+    },
+
     opponents() {
-      const { [this.activePlayerId]: _, ...opponents } = this.players;
-      return opponents;
-    }
+      const { [this.activePlayerId]: _, ...rest } = this.players;
+      return rest;
+    },
   },
+
   methods: {
     transact() {
-      let amount = parseInt(this.amount);
       const players = { ...this.players };
+
       const activePlayer = players[this.activePlayerId];
-      const type = this.type;
+      if (!activePlayer) return;
 
-      if (type === 'pay') {
-        amount = -amount;
+      const amount = Number(this.amount);
+      if (isNaN(amount) || amount <= 0) return;
+
+      activePlayer.transactions = activePlayer.transactions || [];
+
+      let finalAmount = amount;
+
+      if (this.type === 'pay') {
+        finalAmount = -amount;
       }
 
-      if (type === 'collect') {
-        this.to = '0';
-      }
+      activePlayer.amount =
+        (activePlayer.amount || 0) + finalAmount;
 
-      activePlayer.amount += amount;
       activePlayer.transactions.push({
-        type,
-        amount,
+        type: this.type,
+        amount: finalAmount,
       });
 
-      if (this.to !== '0') {
-        players[this.to].amount -= amount;
+      if (this.to !== '0' && players[this.to]) {
+        players[this.to].transactions =
+          players[this.to].transactions || [];
+
+        players[this.to].amount =
+          (players[this.to].amount || 0) - finalAmount;
+
         players[this.to].transactions.push({
-          type: type === 'pay' ? 'collect' : 'pay',
-          amount,
+          type: this.type === 'pay' ? 'collect' : 'pay',
+          amount: finalAmount,
         });
       }
 
       localStorage.setItem('game', JSON.stringify(players));
-
       this.$router.replace('/game');
-    }
-  }
-}
+    },
+  },
+};
 </script>
