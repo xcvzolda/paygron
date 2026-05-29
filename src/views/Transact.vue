@@ -17,7 +17,7 @@
       </div>
 
       <h3 class="text-green-500 font-semibold">
-        {{ new Intl.NumberFormat('en-IN').format(currentPlayer?.amount || 0) }}
+        {{ formattedCurrentAmount }}
       </h3>
 
       <FormInput class="my-10" v-model="amount" type="number" required>
@@ -102,6 +102,11 @@ export default {
       const amount = this.currentPlayer?.amount || 0;
       return new Intl.NumberFormat('en-IN').format(amount);
     },
+
+    formattedCurrentAmount() {
+      const amount = this.currentPlayer?.amount || 0;
+      return new Intl.NumberFormat('en-IN').format(amount);
+    },
   },
 
   methods: {
@@ -116,7 +121,7 @@ export default {
 
       activePlayer.transactions = activePlayer.transactions || [];
 
-      let finalAmount = this.type === 'pay' ? -amount : amount;
+      const finalAmount = this.type === 'pay' ? -amount : amount;
 
       activePlayer.amount =
         (activePlayer.amount || 0) + finalAmount;
@@ -126,7 +131,7 @@ export default {
         amount: finalAmount,
       });
 
-      // "0" = bank, so ignore it
+      // "0" = bank (disabled target)
       if (this.to && this.to !== '0' && players[this.to]) {
         players[this.to].transactions =
           players[this.to].transactions || [];
