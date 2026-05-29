@@ -1,7 +1,7 @@
 <template>
   <div class="justify-start">
     <h3 class="text-green-500 font-semibold">
-    {{ formattedAmount }}
+      {{ formattedAmount }}
     </h3>
 
     <form class="mt-32 w-9/12" @submit.prevent="transact">
@@ -30,10 +30,10 @@
 
       <div class="flex">
         <MegaChoice
-          v-for="(player, i) in opponents"
-          :key="i"
+          v-for="(player, id) in opponents"
+          :key="id"
           name="to"
-          :inputValue="i"
+          :inputValue="id"
           v-model="to"
           :disabled="type === 'collect'"
         >
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       type: 'pay',
-      to: '0',
+      to: '0', // "0" = bank / disabled target
       amount: 0,
     };
   },
@@ -96,11 +96,11 @@ export default {
     opponents() {
       const { [this.activePlayerId]: _, ...rest } = this.players;
       return rest;
-    
+    },
+
     formattedAmount() {
-      const amount = (this.currentPlayer && this.currentPlayer.amount) || 0;
+      const amount = this.currentPlayer?.amount || 0;
       return new Intl.NumberFormat('en-IN').format(amount);
-      }
     },
   },
 
@@ -116,11 +116,7 @@ export default {
 
       activePlayer.transactions = activePlayer.transactions || [];
 
-      let finalAmount = amount;
-
-      if (this.type === 'pay') {
-        finalAmount = -amount;
-      }
+      let finalAmount = this.type === 'pay' ? -amount : amount;
 
       activePlayer.amount =
         (activePlayer.amount || 0) + finalAmount;
@@ -130,7 +126,8 @@ export default {
         amount: finalAmount,
       });
 
-      if (this.to !== '0' && players[this.to]) {
+      // "0" = bank, so ignore it
+      if (this.to && this.to !== '0' && players[this.to]) {
         players[this.to].transactions =
           players[this.to].transactions || [];
 
